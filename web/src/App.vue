@@ -1,11 +1,12 @@
 <template>
-  <div id="app">
-    <ul>
-      <li><a href="/#/">Home</a> </li>
-      <li><a href="/#/manufaturers">Manufacturers</a> </li>
-    </ul>
-    <router-view/>
-  </div>
+    <div id="app">
+        <ul>
+            <li><a href="/#/">Home</a></li>
+            <li><a href="/#/manufaturers">Manufacturers</a></li>
+            <li><a href="/#/cars">Cars</a></li>
+        </ul>
+        <router-view/>
+    </div>
 </template>
 
 <script>
