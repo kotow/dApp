@@ -1,12 +1,14 @@
 <template>
     <div id="metamask-warning">
         <form>
-            <input name="name" type="string" v-model="name">
+            <input name="address" type="text" v-model="address">
+            <input name="name" type="text" v-model="name">
             <input type="file" name="photo" id="photo" @change="processFile($event)">
-            <a href="/#/manufaturers" v-on:click="registerManufacturer">SUBMIT</a>
+            <a href="/#/manufaturers" disabled v-on:click="registerManufacturer">SUBMIT</a>
         </form>
         <ul id="example-1">
             <li v-for="manufacturer in manufacturers">
+                <img :src="getUrl(manufacturer.logo)"/>
                 {{ manufacturer.name }}
             </li>
         </ul>
@@ -23,36 +25,53 @@
             return {
                 name: null,
                 logo: null,
+                address: null,
                 contract: null,
                 tokenContract: null,
-                manufacturers: []
+                manufacturers: [],
+                logoUploaded: false,
+                web3js: null
             }
         },
         methods: {
+            getUrl(path) {
+              return 'http://localhost:8080/ipfs/' + path;
+            },
             processFile(event) {
                 let file = event.target.files[0];
+                let self = this;
                 const reader = new FileReader();
-                reader.readAsText(file);
+                reader.readAsArrayBuffer(file);
                 reader.onload = function () {
                     const ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'});
                     const buf = buffer.Buffer(reader.result);
                     ipfs.files.add(buf, (err, result) => {
-                        console.log(this.name);
                         if (err) {
                             console.log("Something went wrong when trying to upload the photo.", err);
                             return;
                         }
-                        this.logo = result[0].hash;
+                        self.logo = result[0].hash;
+                        console.log(self.logo);
                     })
                 }
             },
             registerManufacturer: function (event) {
                 console.log(this.logo);
                 console.log(this.name);
-
-                this.contract.createManufacturer(this.web3js.eth.accounts[0], this.name, (err, balance) => {
-                    this.tokenBalance = this.web3js.fromWei(balance) + " CUR"
+                console.log(this.address);
+                let self = this;
+                this.contract.createManufacturer(this.web3js.eth.accounts[0], this.name, this.logo, (err, balance) => {
+                    console.log(err);
                 });
+//                this.tokenContract.transfer("0x0b47c7a0b2E18aaa683759B5E04ED2C991d54409", 100000000000000000000, (err) => {
+//                    if(!err) {
+//                        self.contract.createManufacturer(self.account, self.name, self.logo, (err, balance) => {
+//                            console.log(err);
+//                        });
+//                    }
+//                    console.log(err);
+//                });
+
             }
         },
         created() {
@@ -305,7 +324,17 @@
                         "inputs": [
                             {
                                 "indexed": false,
+                                "name": "_address",
+                                "type": "address"
+                            },
+                            {
+                                "indexed": false,
                                 "name": "name",
+                                "type": "string"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "logo",
                                 "type": "string"
                             }
                         ],
@@ -389,6 +418,10 @@
                             },
                             {
                                 "name": "_name",
+                                "type": "string"
+                            },
+                            {
+                                "name": "_logo",
                                 "type": "string"
                             }
                         ],
@@ -483,17 +516,17 @@
                 ];
 
                 let contract = web3.eth.contract(abi2);
-                this.contract = contract.at('0x4cfdff84612ad29db92012cef9b3d7ba706d5f47');
+                this.contract = contract.at('0x7b751c0bfd12509eb3a1742a93f8d736b5c235a5');
                 let self = this;
                 this.contract.manufacturerCreated({}, { fromBlock: 0, toBlock: 'latest' }).get((error, eventResult) => {
                     if (error)
                         console.log('Error in myEvent event handler: ' + error);
                     else {
                         eventResult.map(function(value, key) {
+                            console.log(value.args)
                             self.manufacturers.push(value.args);
                         });
                     }
-                        console.log('myEvent: ' + this.manufacturers);
                 });
             } else {
                 console.log('No web3? You should consider trying MetaMask!');

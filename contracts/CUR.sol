@@ -4,6 +4,7 @@ contract CUR {
     struct Manufacturer {
         string name;
         bool exists;
+        string logo;
         // mapping(string => Car) cars;
     }
 
@@ -34,7 +35,7 @@ contract CUR {
     }
 
     event carRepaired(string VIN, address repairService, bool authorised);
-    event manufacturerCreated(string name);
+    event manufacturerCreated(address _address, string name, string logo);
     event serviceCreated(string name);
     event carCreated(string model, string VIN, address manufaturerAddress);
     event serviceAuthorized(address serviceAddress, address manufaturerAddress);
@@ -55,9 +56,9 @@ contract CUR {
         _;
     }
 
-    function createManufacturer(address _address, string _name) isOwner public {
-        manufacturers[_address] = Manufacturer({name: _name, exists: true});
-        emit manufacturerCreated(_name);
+    function createManufacturer(address _address, string _name, string _logo) isOwner public {
+        manufacturers[_address] = Manufacturer({name: _name, exists: true, logo: _logo});
+        emit manufacturerCreated(_address, _name, _logo);
     }
 
     function newCar(string _model, string _VIN) public isManufacturer {
