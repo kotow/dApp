@@ -53,7 +53,7 @@
             getTokenBalance: async function () {
                 let self = this;
                 this.tokenContract.balanceOf(this.web3js.eth.accounts[0], (err, balance) => {
-                    self.tokenBalance = self.web3js.fromWei(balance, "ether") + " CUR"
+                    self.tokenBalance = self.web3js.fromWei(balance, "ether") + " CUR";
                     console.log(self.web3js.fromWei(balance));
                 });
             }
