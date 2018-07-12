@@ -16,6 +16,32 @@ contract('CUR', function (accounts) {
         assert(false, "didn't fail");
     });
 
+    it("check is owner", async function () {
+        instance = await kur.deployed();
+
+        await instance.isContractOwner({from: ownerAddress}, (err, resp) => {
+            assert(resp)
+        });
+    });
+
+
+    it("check is manufacturer", async function () {
+        instance = await kur.deployed();
+
+        await instance.isManufacturerAddress({from: manufacturerAddress}, (err, resp) => {
+            assert(resp)
+        });
+    });
+
+
+    it("check is service", async function () {
+        instance = await kur.deployed();
+
+        await instance.isServiceAddress({from: serviceAddress}, (err, resp) => {
+            assert(resp)
+        });
+    });
+
     it("fails when incorrect service", async function () {
         try {
             await instance.repairCar('VINNUMBER123', serviceAddress, {from: manufacturerAddress});
@@ -26,11 +52,11 @@ contract('CUR', function (accounts) {
     });
 
     it("create manufacturer", async function () {
-        await instance.createManufacturer(manufacturerAddress, 'BMW', {from: ownerAddress})
+        await instance.createManufacturer(manufacturerAddress, 'BMW', 'imageLink', {from: ownerAddress})
             .then(() => assertEvent(instance, {
                 event: "manufacturerCreated",
                 logIndex: 1,
-                args: {name: "BMW"}
+                args: {name: "BMW", logo: "imageLink",}
             }));
     });
 
@@ -44,11 +70,11 @@ contract('CUR', function (accounts) {
     });
 
     it("create service", async function () {
-        await instance.newService('Pesho\'s service', {from: serviceAddress})
+        await instance.newService('Pesho\'s service', 'Sofia Bulgaria', {from: serviceAddress})
             .then(() => assertEvent(instance, {
                 event: "serviceCreated",
                 logIndex: 1,
-                args: {name: "Pesho's service"}
+                args: {name: "Pesho's service", serviceAddress: "Sofia Bulgaria"}
             }));
     });
 
@@ -61,21 +87,12 @@ contract('CUR', function (accounts) {
             }));
     });
 
-    it("sell car", async function () {
-        await instance.sellCar('VINNUMBER123', 'Gosho', {from: manufacturerAddress})
-            .then(() => assertEvent(instance, {
-                event: "carSold",
-                logIndex: 1,
-                args: {_carVIN: "VINNUMBER123", _carOwnerName: 'Gosho'}
-            }));
-    });
-
     it("repair car", async function () {
-        await instance.repairCar('VINNUMBER123', serviceAddress, {from: serviceAddress})
+        await instance.repairCar('VINNUMBER123', serviceAddress, 'documentLink', {from: serviceAddress})
             .then(() => assertEvent(instance, {
                 event: "carRepaired",
                 logIndex: 1,
-                args: {VIN: "kur", repairService: manufacturerAddress, authorised: true}
+                args: {VIN: "kur", repairService: manufacturerAddress, authorised: true, documentLink: "documentLink"}
             }));
     });
 });

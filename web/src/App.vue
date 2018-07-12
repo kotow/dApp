@@ -3,7 +3,7 @@
         <ul>
             <li><a href="/#/">Home</a></li>
             <li><a href="/#/manufaturers">Manufacturers</a></li>
-            <li><a href="/#/cars">Cars</a></li>
+            <li><a href="/#/services">Services</a></li>
         </ul>
         <router-view/>
     </div>
