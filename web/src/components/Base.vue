@@ -1,12 +1,14 @@
 <script>
-    /* eslint-disable */
+/* eslint-disable */
     export default {
         data() {
             return {
                 contract: null,
                 tokenContract: null,
                 web3js: null,
-                isOwner: false
+                isOwner: false,
+                isManufacturer: false,
+                isService: false
             }
         },
         methods: {},
@@ -224,7 +226,7 @@
                 ];
                 let MyContract = web3.eth.contract(abi);
 
-                this.tokenContract = MyContract.at('0x131cdde690467ecd9c9a6325b82e340bcc68929e');
+                this.tokenContract = MyContract.at('0xb13bcfd17ac6c003e73d5ed4d7484bc68525bcc7');
                 let abi2 = [
                     {
                         "inputs": [],
@@ -249,6 +251,11 @@
                                 "indexed": false,
                                 "name": "authorised",
                                 "type": "bool"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "documentLink",
+                                "type": "string"
                             }
                         ],
                         "name": "carRepaired",
@@ -282,6 +289,11 @@
                             {
                                 "indexed": false,
                                 "name": "name",
+                                "type": "string"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "serviceAddress",
                                 "type": "string"
                             }
                         ],
@@ -328,21 +340,46 @@
                         "type": "event"
                     },
                     {
-                        "anonymous": false,
-                        "inputs": [
+                        "constant": true,
+                        "inputs": [],
+                        "name": "isContractOwner",
+                        "outputs": [
                             {
-                                "indexed": false,
-                                "name": "carVIN",
-                                "type": "string"
-                            },
-                            {
-                                "indexed": false,
-                                "name": "newOwnerName",
-                                "type": "string"
+                                "name": "",
+                                "type": "bool"
                             }
                         ],
-                        "name": "carSold",
-                        "type": "event"
+                        "payable": false,
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "constant": true,
+                        "inputs": [],
+                        "name": "isManufacturerAddress",
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "bool"
+                            }
+                        ],
+                        "payable": false,
+                        "stateMutability": "view",
+                        "type": "function"
+                    },
+                    {
+                        "constant": true,
+                        "inputs": [],
+                        "name": "isServiceAddress",
+                        "outputs": [
+                            {
+                                "name": "",
+                                "type": "bool"
+                            }
+                        ],
+                        "payable": false,
+                        "stateMutability": "view",
+                        "type": "function"
                     },
                     {
                         "constant": false,
@@ -390,6 +427,10 @@
                             {
                                 "name": "_name",
                                 "type": "string"
+                            },
+                            {
+                                "name": "_serviceAddress",
+                                "type": "string"
                             }
                         ],
                         "name": "newService",
@@ -420,26 +461,12 @@
                                 "type": "string"
                             },
                             {
-                                "name": "_carOwnerName",
-                                "type": "string"
-                            }
-                        ],
-                        "name": "sellCar",
-                        "outputs": [],
-                        "payable": false,
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "constant": false,
-                        "inputs": [
-                            {
-                                "name": "_carVIN",
-                                "type": "string"
-                            },
-                            {
                                 "name": "_serviceAddress",
                                 "type": "address"
+                            },
+                            {
+                                "name": "documentLink",
+                                "type": "string"
                             }
                         ],
                         "name": "repairCar",
@@ -451,11 +478,23 @@
                 ];
 
                 let contract = web3.eth.contract(abi2);
-                this.contract = contract.at('0x7b751c0bfd12509eb3a1742a93f8d736b5c235a5');
-                this.isOwner = this.web3js.eth.accounts[0] == '0x0b47c7a0b2e18aaa683759b5e04ed2c991d54409';
+                this.contract = contract.at('0xb13bcfd17ac6c003e73d5ed4d7484bc68525bcc7');
+                this.contract.isContractOwner((err, resp) => {
+                    console.log(err, resp);
+                    this.isOwner = resp;
+                });
+                this.contract.isManufacturerAddress((err, resp) => {
+                    console.log(err, resp);
+                    this.isManufacturer = resp;
+                });
+                this.contract.isServiceAddress((err, resp) => {
+                    console.log(err, resp);
+                    this.isService = resp;
+                });
                 let account = web3.eth.accounts[0];
                 let accountInterval = setInterval(function () {
                     if (web3.eth.accounts[0] !== account && account !== 'undefined') {
+
                         account = web3.eth.accounts[0];
                         location.reload();
                     }

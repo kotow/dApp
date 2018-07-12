@@ -1,5 +1,5 @@
 <template>
-    <div id="metamask-warning">
+    <div id="metamask-warning" v-if="!this.isOwner && this.web3js">
         <div>address: {{account }}</div>
         <div>ETH: {{balance}}</div>
         <div>tokens: {{tokenBalance}}</div>

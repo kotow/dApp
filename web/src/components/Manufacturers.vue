@@ -6,16 +6,30 @@
             <input type="file" name="photo" id="photo" @change="processFile($event)">
             <a href="/#/manufaturers" disabled v-on:click="registerManufacturer">SUBMIT</a>
         </form>
-        <ul id="example-1">
-            <li v-for="manufacturer in manufacturers" :key="manufacturer.address">
-                <img :src="getUrl(manufacturer.logo)"/>
-                {{ manufacturer.name }}
-            </li>
-        </ul>
+        <table class="list">
+            <tr v-for="manufacturer in manufacturers" :key="manufacturer._address">
+                <td style="display: block;width: 100px;"><img :src="getUrl(manufacturer.logo)"/></td>
+                <td>{{ manufacturer.name }}</td>
+                <td>
+                    <a :href="'#/cars/' + manufacturer._address">Cars</a>
+                    <router-link :to="{ name: 'Cars', params: { address: manufacturer._address } }">Navigate to Page2</router-link>
+                    <a href="#">Authorized services</a>
+                </td>
+            </tr>
+        </table>
     </div>
 
 </template>
-
+<style>
+    img {
+        display: block;
+        width:100%;
+        height:auto;
+    }
+    table.list, table.list td {
+        border: solid 1px;
+    }
+</style>
 <script>
 /* eslint-disable */
     import Base from './Base'
@@ -58,18 +72,9 @@
                 console.log(this.logo);
                 console.log(this.name);
                 console.log(this.address);
-                let self = this;
-                this.contract.createManufacturer(this.web3js.eth.accounts[0], this.name, this.logo, (err, balance) => {
+                this.contract.createManufacturer("0x6780eaB092d2BF8436e655e7CbA4772847Ca7D57", this.name, this.logo, (err, resp) => {
                     console.log(err);
                 });
-//                this.tokenContract.transferFrom(this.web3js.eth.accounts[0], "0x0b47c7a0b2E18aaa683759B5E04ED2C991d54409", 100000000000000000000, (err) => {
-//                    if(!err) {
-//                        self.contract.createManufacturer(self.account, self.name, self.logo, (err, balance) => {
-//                            console.log(err);
-//                        });
-//                    }
-//                    console.log(err);
-//                });
 
             }
         },

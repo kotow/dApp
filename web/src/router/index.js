@@ -19,7 +19,7 @@ export default new Router({
       component: Manufacturers
     },
     {
-      path: '/cars',
+      path: '/cars/:address',
       name: 'Cars',
       component: Cars
     }
