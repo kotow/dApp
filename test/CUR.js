@@ -17,32 +17,12 @@ contract('CUR', function (accounts) {
     });
 
     it("check is owner", async function () {
-        instance = await kur.deployed();
-
-        await instance.isContractOwner({from: ownerAddress}, (err, resp) => {
-            assert(resp)
+        await instance.isContractOwner({from: ownerAddress}).then((resp) => {
+            assert.isOk(resp);
         });
     });
-
 
     it("check is manufacturer", async function () {
-        instance = await kur.deployed();
-
-        await instance.isManufacturerAddress({from: manufacturerAddress}, (err, resp) => {
-            assert(resp)
-        });
-    });
-
-
-    it("check is service", async function () {
-        instance = await kur.deployed();
-
-        await instance.isServiceAddress({from: serviceAddress}, (err, resp) => {
-            assert(resp)
-        });
-    });
-
-    it("fails when incorrect service", async function () {
         try {
             await instance.repairCar('VINNUMBER123', serviceAddress, {from: manufacturerAddress});
         } catch (e) {
@@ -58,6 +38,12 @@ contract('CUR', function (accounts) {
                 logIndex: 1,
                 args: {name: "BMW", logo: "imageLink",}
             }));
+    });
+
+    it("check is manufacturer", async function () {
+        await instance.isManufacturerAddress({from: manufacturerAddress}).then((resp) => {
+            assert.isOk(resp);
+        });
     });
 
     it("create car", async function () {
@@ -76,6 +62,12 @@ contract('CUR', function (accounts) {
                 logIndex: 1,
                 args: {name: "Pesho's service", serviceAddress: "Sofia Bulgaria"}
             }));
+    });
+
+    it("check is service", async function () {
+        await instance.isServiceAddress({from: serviceAddress}).then((resp) => {
+            assert.isOk(resp);
+        });
     });
 
     it("authorize service", async function () {

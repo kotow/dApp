@@ -11,8 +11,7 @@
                 <td style="display: block;width: 100px;"><img :src="getUrl(manufacturer.logo)"/></td>
                 <td>{{ manufacturer.name }}</td>
                 <td>
-                    <a :href="'#/cars/' + manufacturer._address">Cars</a>
-                    <router-link :to="{ name: 'Cars', params: { address: manufacturer._address } }">Navigate to Page2</router-link>
+                    <router-link :to="{ name: 'Cars', params: { address: manufacturer._address } }">Cars</router-link>
                     <a href="#">Authorized services</a>
                 </td>
             </tr>

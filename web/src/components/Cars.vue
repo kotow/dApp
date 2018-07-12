@@ -9,6 +9,9 @@
             <tr v-for="car in cars" :key="car.VIN">
                 <td>{{ car.VIN }}</td>
                 <td>{{ car.model }}</td>
+                <td>
+                    <router-link :to="{ name: 'Car', params: { VIN: car.VIN } }">View History</router-link>
+                </td>
                 <td v-if="isService">
                     <a href="#">Repair</a>
                 </td>

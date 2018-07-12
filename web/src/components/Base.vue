@@ -226,7 +226,7 @@
                 ];
                 let MyContract = web3.eth.contract(abi);
 
-                this.tokenContract = MyContract.at('0xb13bcfd17ac6c003e73d5ed4d7484bc68525bcc7');
+                this.tokenContract = MyContract.at('0xb143cE0fC6bb7BaF6C688E0962d11febc45DB4FF');
                 let abi2 = [
                     {
                         "inputs": [],
