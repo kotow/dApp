@@ -243,12 +243,12 @@
                                 "type": "string"
                             },
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "VIN",
                                 "type": "string"
                             },
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "manufaturerAddress",
                                 "type": "address"
                             },
@@ -270,12 +270,12 @@
                         "anonymous": false,
                         "inputs": [
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "VIN",
                                 "type": "string"
                             },
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "repairService",
                                 "type": "address"
                             },
@@ -312,7 +312,7 @@
                         "anonymous": false,
                         "inputs": [
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "_address",
                                 "type": "address"
                             },
@@ -334,12 +334,12 @@
                         "anonymous": false,
                         "inputs": [
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "name",
                                 "type": "string"
                             },
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "serviceAddress",
                                 "type": "string"
                             }
@@ -351,12 +351,12 @@
                         "anonymous": false,
                         "inputs": [
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "serviceAddress",
                                 "type": "address"
                             },
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "manufaturerAddress",
                                 "type": "address"
                             }
@@ -368,7 +368,7 @@
                         "anonymous": false,
                         "inputs": [
                             {
-                                "indexed": false,
+                                "indexed": true,
                                 "name": "VIN",
                                 "type": "string"
                             }
@@ -519,7 +519,7 @@
                 ];
 
                 let contract = web3.eth.contract(abi2);
-                this.contract = contract.at('0x1031bb14e453db2bfe0cb39c0a0207780e58ec8f');
+                this.contract = contract.at('0x805cedc499aa2a75cbee29d084db25e3b3923139');
                 this.contract.isContractOwner((err, resp) => {
                     console.log(err, resp);
                     this.isOwner = resp;

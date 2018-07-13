@@ -32,13 +32,13 @@ contract CUR {
         owner = msg.sender;
     }
 
-    event carCreated(string model, string VIN, address manufaturerAddress, uint dateCreated, uint warrantyUntil);
-    event carRepaired(string VIN, address repairService, bool authorised, string documentLink, uint date,
+    event carCreated(string model, string indexed VIN, address indexed manufaturerAddress, uint dateCreated, uint warrantyUntil);
+    event carRepaired(string indexed VIN, address indexed repairService, bool authorised, string documentLink, uint date,
         string details, uint mileage);
-    event manufacturerCreated(address _address, string name, string logo);
-    event serviceCreated(string name, string serviceAddress);
-    event serviceAuthorized(address serviceAddress, address manufaturerAddress);
-    event warrantyCanceled(string VIN);
+    event manufacturerCreated(address indexed _address, string name, string logo);
+    event serviceCreated(string indexed name, string indexed serviceAddress);
+    event serviceAuthorized(address indexed serviceAddress, address indexed manufaturerAddress);
+    event warrantyCanceled(string indexed VIN);
 
     modifier isOwner() {
         require(msg.sender == owner);

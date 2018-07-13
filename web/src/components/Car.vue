@@ -90,24 +90,24 @@ const buffer = require('buffer');
         created() {
             console.log(this.$route.params.VIN);
             let self = this;
-            this.contract.carRepaired({VIN: this.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
+            this.contract.carRepaired({VIN: this.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).watch((error, eventResult) => {
                 if (error)
                     console.log('Error in myEvent event handler: ' + error);
                 else {
-                    eventResult.map(function (value, key) {
-                        self.repairs.push(value.args);
-                    });
+
+                        self.repairs.push(eventResult.args);
+
                 }
             });
-            this.contract.carCreated({VIN: this.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
+            this.contract.carCreated({VIN: this.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).watch((error, eventResult) => {
                 console.log(eventResult)
                 if (error)
                     console.log('Error in myEvent event handler: ' + error);
                 else {
-                        self.car = eventResult[0].args;
-                    self.contract.warrantyCanceled({VIN: self.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
-                        console.log('123', eventResult)
-                        if (eventResult[0]) self.warrantyActive = false;
+                        self.car = eventResult.args;
+                    self.contract.warrantyCanceled({VIN: self.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).watch((error, eventResult) => {
+                        console.log('12344444', eventResult)
+                        if (eventResult) self.warrantyActive = false;
                     });
                 }
             });

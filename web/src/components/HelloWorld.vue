@@ -18,7 +18,7 @@
             <tr v-for="car in cars" :key="car.VIN">
                 <td>
                     <div style="height: 100px; overflow:hidden;">
-                        <img :src="logos[car.manufacturer]"/>
+                        <img :src="logos[car.manufaturerAddress]"/>
                     </div>
                 </td>
                 <td>{{ car.VIN }}</td>
@@ -58,18 +58,26 @@
                     console.log('Error in myEvent event handler: ' + error);
                 else {
                     eventResult.map(function (value, key) {
-                        self.logos[value.args.serviceAddress] = 'http://localhost:8080/ipfs/' + value.args.logo;
+                        self.logos[value.args._address] = 'http://localhost:8080/ipfs/' + value.args.logo;
                     });
                 }
-                self.contract.carCreated({}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
+                self.contract.carCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch((error, eventResult) => {
+                    console.log('Error in myEvent event handler: ' + eventResult);
                     if (error)
-                        console.log('Error in myEvent event handler: ' + error);
+                        console.log('Error in myEvent event handler: ' + eventResult);
                     else {
-                        eventResult.map(function (value, key) {
-                            self.cars.push(value.args);
-                        });
+                        self.cars.push(eventResult.args);
                     }
                 });
+//                self.contract.carCreated({}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
+//                    if (error)
+//                        console.log('Error in myEvent event handler: ' + error);
+//                    else {
+//                        eventResult.map(function (value, key) {
+//                            self.cars.push(value.args);
+//                        });
+//                    }
+//                });
             });
         }
     }

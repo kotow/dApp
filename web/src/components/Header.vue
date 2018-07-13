@@ -1,31 +1,37 @@
 <template>
-    <ul>
-        <li><a href="/#/">Home</a></li>
-        <li v-if="this.web3js"><a href="/#/manufaturers">Manufacturers</a></li>
-        <li v-if="this.web3js"><a href="/#/services">Services</a></li>
-        <li style="float:right">
-            <div v-if="!this.isOwner && this.web3js">
-                <div>
-                    <div>address: {{account }}</div>
+    <div>
+        <ul>
+            <li><a href="/#/">Home</a></li>
+            <li v-if="this.web3js"><a href="/#/manufaturers">Manufacturers</a></li>
+            <li v-if="this.web3js"><a href="/#/services">Services</a></li>
+            <li style="float:right">
+                <div v-if="!this.isOwner && this.web3js">
                     <div>
-                        <div>ETH: {{balance}}</div>
-                        <div>tokens: {{tokenBalance}}</div>
+                        <div>address: {{account }}</div>
+                        <div>
+                            <div>ETH: {{balance}}</div>
+                            <div>tokens: {{tokenBalance}}</div>
+                        </div>
+                    </div>
+                    <div>
+                        <form ref="form">
+                            <input name="amountToBuy" type="number" v-model="amountToBuy">
+                            <a href="#" v-on:click="buyTokens">Buy Tokens</a>
+                        </form>
                     </div>
                 </div>
-                <div>
-                    <form ref="form">
-                        <input name="amountToBuy" type="number" v-model="amountToBuy">
-                        <a href="#" v-on:click="buyTokens">Buy Tokens</a>
-                    </form>
-                </div>
-            </div>
-        </li>
-    </ul>
+            </li>
+        </ul>
+        <div class="warning">
+            <p>To use this app please install metamask</p>
+        </div>
+    </div>
 </template>
 <style>
     div {
         color: white;
     }
+
     ul {
         list-style-type: none;
         margin: 0;
@@ -33,6 +39,7 @@
         overflow: hidden;
         background-color: #333333;
     }
+
     li {
         float: left;
         border-right: 1px solid #bbb;
@@ -50,12 +57,13 @@
     li a:hover {
         background-color: #111111;
     }
+
     .active {
         background-color: #4CAF50;
     }
 </style>
 <script>
-/* eslint-disable */
+    /* eslint-disable */
     import Base from './Base'
 
     export default {
