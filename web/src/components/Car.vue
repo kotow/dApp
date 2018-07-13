@@ -107,7 +107,7 @@ const buffer = require('buffer');
                         self.car = eventResult[0].args;
                     self.contract.warrantyCanceled({VIN: self.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
                         console.log('123', eventResult)
-                        if (eventResult[0]) active = self.warrantyActive;
+                        if (eventResult[0]) self.warrantyActive = false;
                     });
                 }
             });

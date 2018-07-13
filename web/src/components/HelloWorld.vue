@@ -1,69 +1,101 @@
 <template>
-    <div id="metamask-warning" v-if="!this.isOwner && this.web3js">
-        <div>address: {{account }}</div>
-        <div>ETH: {{balance}}</div>
-        <div>tokens: {{tokenBalance}}</div>
-        <form ref="form">
-            <input name="amountToBuy" type="number" v-model="amountToBuy">
-            <a href="#" v-on:click="buyTokens">SUBMIT</a>
-        </form>
-
+    <div>
+        <table class="cars">
+            <thead>
+                <td>
+                    <p>Manucaturer</p>
+                </td>
+                <td>
+                    <p>VIN</p>
+                </td>
+                <td>
+                    <p>Model</p>
+                </td>
+                <td>
+                    <p>Details</p>
+                </td>
+            </thead>
+            <tr v-for="car in cars" :key="car.VIN">
+                <td>
+                    <div style="height: 100px; overflow:hidden;">
+                        <img :src="logos[car.manufacturer]"/>
+                    </div>
+                </td>
+                <td>{{ car.VIN }}</td>
+                <td>{{ car.model }}</td>
+                <td>
+                    <router-link :to="{ name: 'Car', params: { VIN: car.VIN } }">View Details</router-link>
+                </td>
+            </tr>
+        </table>
     </div>
 
 </template>
 
 <script>
-/* eslint-disable */
-    import Web3 from 'web3'
+    /* eslint-disable */
     import Base from './Base'
 
     export default {
         extends: Base,
         data() {
             return {
-                account: null,
-                balance: null,
-                tokenBalance: null,
-                amountToBuy: 0
+                cars: [],
+                model: null,
+                VIN: null,
+                logos: []
             }
         },
         methods: {
-            buyTokens: function () {
-                console.log(this.amountToBuy);
-                let ethToSpend = this.amountToBuy / 100;
-                let rawTx = {
-                    to: 'b143ce0fc6bb7baf6c688e0962d11febc45db4ff',
-                    from: this.web3js.eth.accounts[0],
-                    value: this.web3js.toWei(ethToSpend)
-                };
-
-                this.web3js.eth.sendTransaction(rawTx, (err, hash) => {
-                    console.log(err);
-                    console.log('adasdasdasdda');
-                    if (!err)
-                        console.log(hash);
-                });
-            },
-            getBalance: async function () {
-                this.account = this.web3js.eth.accounts[0];
-                this.web3js.eth.getBalance(this.account, (err, balance) => {
-                    this.balance = this.web3js.fromWei(balance, "ether") + " ETH"
-                });
-            },
-            getTokenBalance: async function () {
-                let self = this;
-                this.tokenContract.balanceOf(this.web3js.eth.accounts[0], (err, balance) => {
-                    self.tokenBalance = self.web3js.fromWei(balance, "ether") + " CUR";
-                    console.log(self.web3js.fromWei(balance));
-                });
-            }
         },
         created() {
-            this.getBalance();
-            this.getTokenBalance();
+            let self = this;
+            this.contract.manufacturerCreated({}, {
+                fromBlock: 0,
+                toBlock: 'latest'
+            }).get((error, eventResult) => {
+                if (error)
+                    console.log('Error in myEvent event handler: ' + error);
+                else {
+                    eventResult.map(function (value, key) {
+                        self.logos[value.args.serviceAddress] = 'http://localhost:8080/ipfs/' + value.args.logo;
+                    });
+                }
+                self.contract.carCreated({}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
+                    if (error)
+                        console.log('Error in myEvent event handler: ' + error);
+                    else {
+                        eventResult.map(function (value, key) {
+                            self.cars.push(value.args);
+                        });
+                    }
+                });
+            });
         }
     }
 </script>
 
 <style>
+    table.cars {
+        padding-top: 100px;
+        border-collapse: collapse;
+        width: 100%;
+        border: 2px solid black;
+    }
+    table.cars th {
+        background-color: #4CAF50;
+        color: white;
+    }
+    table.cars td {
+        text-align: left;
+        padding: 8px;
+        height: 100px;
+        border: 2px solid black;
+    }
+    table.cars tr:nth-child(1){width: 100px;}
+    table.cars tr:nth-child(even){background-color: #c2c2c2}
+    table.cars tr:nth-child(odd){background-color: #929292}
+    table.cars img {
+        display:block; width:100px; height:auto;
+    }
 </style>

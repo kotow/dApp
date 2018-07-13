@@ -1,27 +1,57 @@
 <template>
     <div id="app">
-        <ul>
-            <li><a href="/#/">Home</a></li>
-            <li><a href="/#/manufaturers">Manufacturers</a></li>
-            <li><a href="/#/services">Services</a></li>
-        </ul>
+        <rwv-header></rwv-header>
         <router-view/>
     </div>
 </template>
 
 <script>
+    import RwvHeader from '@/components/Header'
 export default {
-  name: 'App'
+  name: 'App',
+    components: {
+        RwvHeader
+    }
 }
 </script>
 
 <style>
+html {
+    background-color: #4dc71f;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333333;
+}
+
+li {
+    float: left;
+    border-right: 1px solid #bbb;
+}
+
+li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+    background-color: #111111;
+}
+.active {
+    background-color: #4CAF50;
 }
 </style>
