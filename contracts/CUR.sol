@@ -80,15 +80,19 @@ contract CUR {
             VIN : _VIN,
             manufacturerAddress : msg.sender,
             exists : true,
-            dateCreated : block.timestamp,
-            warrantyUntil : (block.timestamp + 365 days)
+            dateCreated : now,
+            warrantyUntil : now + 365 days
             });
-        emit carCreated(_model, _VIN, msg.sender, block.timestamp, (block.timestamp + 365 days));
+        emit carCreated(_model, _VIN, msg.sender, now, now + 365 days);
     }
 
     function newService(string _name, string _serviceAddress) public {
         require(services[msg.sender].exists == false);
         services[msg.sender] = Service({name : _name, exists : true, serviceAddress : _serviceAddress});
+        if(manufacturers[msg.sender].exists) {
+            services[msg.sender].authorizedManufacturers[msg.sender] = true;
+            emit serviceAuthorized(msg.sender, msg.sender);
+        }
         emit serviceCreated(_name, _serviceAddress);
     }
 
@@ -100,7 +104,7 @@ contract CUR {
     function repairCar(string _carVIN, string documentLink, string _details, uint mileage) isService public {
         address carManufacturer = cars[_carVIN].manufacturerAddress;
         bool isAuthorizedService = services[msg.sender].authorizedManufacturers[carManufacturer];
-        if (!isAuthorizedService && cars[_carVIN].warrantyUntil < block.timestamp) {
+        if (!isAuthorizedService && cars[_carVIN].warrantyUntil > block.timestamp) {
             emit warrantyCanceled(_carVIN);
         }
         emit carRepaired(_carVIN, msg.sender, isAuthorizedService, documentLink, block.timestamp,

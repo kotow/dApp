@@ -239,6 +239,38 @@
                         "inputs": [
                             {
                                 "indexed": false,
+                                "name": "model",
+                                "type": "string"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "VIN",
+                                "type": "string"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "manufaturerAddress",
+                                "type": "address"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "dateCreated",
+                                "type": "uint256"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "warrantyUntil",
+                                "type": "uint256"
+                            }
+                        ],
+                        "name": "carCreated",
+                        "type": "event"
+                    },
+                    {
+                        "anonymous": false,
+                        "inputs": [
+                            {
+                                "indexed": false,
                                 "name": "VIN",
                                 "type": "string"
                             },
@@ -256,6 +288,21 @@
                                 "indexed": false,
                                 "name": "documentLink",
                                 "type": "string"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "date",
+                                "type": "uint256"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "details",
+                                "type": "string"
+                            },
+                            {
+                                "indexed": false,
+                                "name": "mileage",
+                                "type": "uint256"
                             }
                         ],
                         "name": "carRepaired",
@@ -305,28 +352,6 @@
                         "inputs": [
                             {
                                 "indexed": false,
-                                "name": "model",
-                                "type": "string"
-                            },
-                            {
-                                "indexed": false,
-                                "name": "VIN",
-                                "type": "string"
-                            },
-                            {
-                                "indexed": false,
-                                "name": "manufaturerAddress",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "carCreated",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": false,
                                 "name": "serviceAddress",
                                 "type": "address"
                             },
@@ -337,6 +362,18 @@
                             }
                         ],
                         "name": "serviceAuthorized",
+                        "type": "event"
+                    },
+                    {
+                        "anonymous": false,
+                        "inputs": [
+                            {
+                                "indexed": false,
+                                "name": "VIN",
+                                "type": "string"
+                            }
+                        ],
+                        "name": "warrantyCanceled",
                         "type": "event"
                     },
                     {
@@ -461,12 +498,16 @@
                                 "type": "string"
                             },
                             {
-                                "name": "_serviceAddress",
-                                "type": "address"
-                            },
-                            {
                                 "name": "documentLink",
                                 "type": "string"
+                            },
+                            {
+                                "name": "_details",
+                                "type": "string"
+                            },
+                            {
+                                "name": "mileage",
+                                "type": "uint256"
                             }
                         ],
                         "name": "repairCar",
@@ -478,7 +519,7 @@
                 ];
 
                 let contract = web3.eth.contract(abi2);
-                this.contract = contract.at('0xb13bcfd17ac6c003e73d5ed4d7484bc68525bcc7');
+                this.contract = contract.at('0x1031bb14e453db2bfe0cb39c0a0207780e58ec8f');
                 this.contract.isContractOwner((err, resp) => {
                     console.log(err, resp);
                     this.isOwner = resp;
@@ -498,7 +539,7 @@
                         account = web3.eth.accounts[0];
                         location.reload();
                     }
-                }, 100);
+                }, 500);
             } else {
                 let warningDiv = document.getElementById('app');
                 warningDiv.innerText = "You don't have MetaMask installed. You can only browse but you won't be able to adopt pets.";

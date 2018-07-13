@@ -80,7 +80,7 @@ contract('CUR', function (accounts) {
     });
 
     it("repair car", async function () {
-        await instance.repairCar('VINNUMBER123', serviceAddress, 'documentLink', {from: serviceAddress})
+        await instance.repairCar('VINNUMBER123', 'documentLink', 'clutch', '57235', {from: serviceAddress})
             .then(() => assertEvent(instance, {
                 event: "carRepaired",
                 logIndex: 1,

@@ -1,12 +1,30 @@
 <template>
     <div>
         <form v-if="this.isService">
-           <!-- Repair car-->
+            <!--string documentLink, string _details, uint mileage-->
+            <input name="mileage" type="text" v-model="mileage">
+            <input name="details" type="text" v-model="details">
+            <input type="file" name="photo" id="photo" @change="processFile($event)">
+            <a href="#" disabled v-on:click="repairCar()">SUBMIT</a>
         </form>
-        <!-- Car info -->
+        <div v-if="this.car">
+            <p>{{ car.model }}</p>
+            <p>{{ car.VIN }}</p>
+            <p>{{ formatDate(car.dateCreated) }}</p>
+            <p>{{ formatDate(car.warrantyUntil) }}</p>
+            <p>{{ car.manufacturerAddress }}</p>
+            <p>{{ warrantyActive }}</p>
+        </div>
+
         <table class="list">
             <tr v-for="repair in repairs" :key="repair.VIN">
-                <!-- List repairs-->
+                <!--event carRepaired(string VIN, address repairService, bool authorised, string documentLink, uint date,
+        string details, uint mileage);-->
+                <td>{{ repair.details }}</td>
+                <td>{{ repair.mileage }}</td>
+                <td>{{ formatDate(repair.date) }}</td>
+                <td>{{ repair.authorised }}</td>
+                <td>{{ getUrl(repair.documentLink) }}</td>
             </tr>
         </table>
     </div>
@@ -16,16 +34,58 @@
 <script>
 /* eslint-disable */
 import Base from './Base'
+import moment from 'moment'
+const ipfsAPI = require('ipfs-api');
+const buffer = require('buffer');
+
     export default {
         extends: Base,
         data() {
             return {
                 repairs: [],
+                car: null,
                 model: null,
-                VIN: null
+                VIN: null,
+                warrantyActive: true,
+                details: null,
+                mileage: null,
+                document: null,
+                documentUploaded: false
             }
         },
         methods: {
+            getUrl(path) {
+                return 'http://localhost:8080/ipfs/' + path;
+            },
+            processFile(event) {
+                let file = event.target.files[0];
+                let self = this;
+                const reader = new FileReader();
+                reader.readAsArrayBuffer(file);
+                reader.onload = function () {
+                    const ipfs = ipfsAPI('localhost', '5001', {protocol: 'http'});
+                    const buf = buffer.Buffer(reader.result);
+                    ipfs.files.add(buf, (err, result) => {
+                        if (err) {
+                            console.log("Something went wrong when trying to upload the photo.", err);
+                            return;
+                        }
+                        self.document = result[0].hash;
+                        console.log(self.document);
+                    })
+                }
+            },
+            formatDate(date) {
+                if (date) {
+                    return moment((date * 1000)).format('MM/DD/YYYY')
+                }
+            },
+            repairCar: function (event) {
+                this.contract.repairCar(this.car.VIN, this.document, this.details, this.mileage, (err, resp) => {
+                    console.log(err);
+                });
+
+            }
         },
         created() {
             console.log(this.$route.params.VIN);
@@ -39,7 +99,19 @@ import Base from './Base'
                     });
                 }
             });
-            console.log(this.cars)
+            this.contract.carCreated({VIN: this.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
+                console.log(eventResult)
+                if (error)
+                    console.log('Error in myEvent event handler: ' + error);
+                else {
+                        self.car = eventResult[0].args;
+                    self.contract.warrantyCanceled({VIN: self.$route.params.VIN}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
+                        console.log('123', eventResult)
+                        if (eventResult[0]) active = self.warrantyActive;
+                    });
+                }
+            });
+            console.log(this.car)
         }
     }
 </script>
