@@ -1,5 +1,12 @@
 <template>
     <div>
+        <div v-if="this.web3js">
+            <p>search</p>
+            <select v-model="selected" @change="viewDetails()">
+                <option disabled value="">kur</option>
+                <option v-for="car in cars" v-bind:value="web3js.toAscii(car.VIN)">{{ web3js.toAscii(car.VIN) }}</option>
+            </select>
+        </div>
         <table class="cars">
             <thead>
                 <td>
@@ -35,6 +42,9 @@
 <script>
 /* eslint-disable */
     import Base from './Base'
+    import Vue from 'vue'
+    import vSelect from 'vue-select'
+    Vue.component('v-select', vSelect)
 
     export default {
         extends: Base,
@@ -43,10 +53,14 @@
                 cars: [],
                 model: null,
                 VIN: null,
-                logos: []
+                logos: [],
+                selected: ''
             }
         },
         methods: {
+            viewDetails: function () {
+                window.location.href = 'http://localhost:1312/#/car/' + this.selected;
+            },
         },
         created() {
             let self = this;
