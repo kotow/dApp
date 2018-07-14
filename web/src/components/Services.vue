@@ -10,9 +10,20 @@
             </form>
         </div>
         <table class="list">
+            <thead>
+                <td>Name</td>
+                <td>Location</td>
+                <td>Authozired From</td>
+                <td>Actions</td>
+            </thead>
             <tr v-for="service in services" :key="service.name">
                 <td>{{ service.name }}</td>
                 <td>{{ service.serviceLocation }}</td>
+                <td>
+                    <div v-for="logo in service.authorized">
+                        <img :src="logo"/>
+                    </div>
+                </td>
                 <td>
                     <button v-on:click="authorizeService(service._address)" >Authorize</button>
                 </td>
@@ -31,7 +42,9 @@
             return {
                 services: [],
                 name: null,
-                address: null
+                address: null,
+                logos: [],
+                service: null
             }
         },
         methods: {
@@ -48,12 +61,36 @@
         },
         created() {
             let self = this;
-            this.contract.serviceCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch((error, eventResult) => {
+            this.contract.manufacturerCreated({}, {
+                fromBlock: 0,
+                toBlock: 'latest'
+            }).get((error, manufaturers) => {
                 if (error)
                     console.log('Error in myEvent event handler: ' + error);
                 else {
-                        self.services.push(eventResult.args);
+                    manufaturers.map(function (value, key) {
+                        self.logos[value.args._address] = 'http://localhost:8080/ipfs/' + value.args.logo;
+                    });
                 }
+                self.contract.serviceCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch((error, services) => {
+                    if (error)
+                        console.log('Error in myEvent event handler: ' + error);
+                    else {
+                        self.service = services.args;
+                        self.contract.serviceAuthorized({}, {fromBlock: 0, toBlock: 'latest'}).get((error, authorized) => {
+                            if (error)
+                                console.log('Error in myEvent event handler: ' + error);
+                            else {
+                                self.service.authorized = [];
+                                authorized.map(function (value, key) {
+                                    self.service.authorized.push(self.logos[value.args.manufaturerAddress]);
+                                });
+                                self.services.push(self.service);
+                            }
+                        });
+
+                    }
+                });
             });
         }
     }
