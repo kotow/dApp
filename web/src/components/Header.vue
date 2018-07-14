@@ -7,10 +7,10 @@
             <li style="float:right">
                 <div v-if="!this.isOwner && this.web3js">
                     <div>
-                        <div>address: {{account }}</div>
+                        <div>address: {{ this.account }}</div>
                         <div>
-                            <div>ETH: {{balance}}</div>
-                            <div>tokens: {{tokenBalance}}</div>
+                            <div>ETH: {{ this.balance }}</div>
+                            <div>tokens: {{ this.tokenBalance }}</div>
                         </div>
                     </div>
                     <div>
@@ -22,12 +22,15 @@
                 </div>
             </li>
         </ul>
-        <div class="warning">
+        <div v-if="!this.web3js" class="warning">
             <p>To use this app please install metamask</p>
         </div>
     </div>
 </template>
 <style>
+    .warning {
+        background-color: red;
+    }
     div {
         color: white;
     }
@@ -63,7 +66,7 @@
     }
 </style>
 <script>
-    /* eslint-disable */
+/* eslint-disable */
     import Base from './Base'
 
     export default {

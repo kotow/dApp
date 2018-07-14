@@ -1,25 +1,27 @@
 <template>
     <div>
-        <form v-if="this.isService">
-            <!--string documentLink, string _details, uint mileage-->
-            <input name="mileage" type="text" v-model="mileage">
-            <input name="details" type="text" v-model="details">
-            <input type="file" name="photo" id="photo" @change="processFile($event)">
-            <a href="#" disabled v-on:click="repairCar()">SUBMIT</a>
-        </form>
+        <div class="form">
+            <form v-if="this.isService" @submit="repairCar">
+                <label for="mileage">Milleage</label>
+                <input id="mileage" name="mileage" type="text" v-model="mileage">
+                <label for="details"> Repair details</label>
+                <input id="details" name="details" type="text" v-model="details">
+                <label for="photo">Repair document</label>
+                <input type="file" name="photo" id="photo" @change="processFile($event)">
+                <button :disabled="!mileage || !details || !documentUploaded" >Repair Car</button>
+            </form>
+        </div>
+
         <div v-if="this.car">
-            <p>{{ car.model }}</p>
-            <p>{{ car.VIN }}</p>
-            <p>{{ formatDate(car.dateCreated) }}</p>
-            <p>{{ formatDate(car.warrantyUntil) }}</p>
-            <p>{{ car.manufacturerAddress }}</p>
-            <p>{{ warrantyActive }}</p>
+            <p>Model: {{ car.model }}</p>
+            <p>VIN Number: {{ web3js.toAscii(car.VIN) }}</p>
+            <p>Date of creation: {{ formatDate(car.dateCreated) }}</p>
+            <p>Warranty: {{ formatDate(car.warrantyUntil) }}</p>
+            <p>Warranty active: {{ warrantyActive }}</p>
         </div>
 
         <table class="list">
             <tr v-for="repair in repairs" :key="repair.VIN">
-                <!--event carRepaired(string VIN, address repairService, bool authorised, string documentLink, uint date,
-        string details, uint mileage);-->
                 <td>{{ repair.details }}</td>
                 <td>{{ repair.mileage }}</td>
                 <td>{{ formatDate(repair.date) }}</td>
@@ -71,7 +73,7 @@ const buffer = require('buffer');
                             return;
                         }
                         self.document = result[0].hash;
-                        console.log(self.document);
+                        self.documentUploaded = true;
                     })
                 }
             },
@@ -117,4 +119,64 @@ const buffer = require('buffer');
 </script>
 
 <style>
+    input[type=text], select {
+        width: 100%;
+        padding: 12px 20px;
+        margin: 8px 0;
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    button:disabled {
+        background-color: #b2b2b2;
+    }
+
+    div.form {
+        border-radius: 5px;
+        background-color: #f2f2f2;
+        padding: 20px;
+        color: black;
+    }
+
+    img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    table.list {
+        padding-top: 100px;
+        border-collapse: collapse;
+        width: 100%;
+        border: 2px solid black;
+    }
+    table.list thead {
+        background-color: #4CAF50;
+        color: white;
+        height: 25px;
+    }
+    table.list td {
+        text-align: left;
+        padding: 8px;
+        height: 100px;
+        border: 2px solid black;
+    }
+    table.list tr:nth-child(even){background-color: #c2c2c2}
+    table.list tr:nth-child(odd){background-color: #929292}
+    table.list img {
+        display:block; width:100px; height:auto;
+    }
 </style>

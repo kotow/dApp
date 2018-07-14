@@ -245,7 +245,7 @@
                             {
                                 "indexed": true,
                                 "name": "VIN",
-                                "type": "string"
+                                "type": "bytes17"
                             },
                             {
                                 "indexed": true,
@@ -272,7 +272,7 @@
                             {
                                 "indexed": true,
                                 "name": "VIN",
-                                "type": "string"
+                                "type": "bytes17"
                             },
                             {
                                 "indexed": true,
@@ -334,13 +334,18 @@
                         "anonymous": false,
                         "inputs": [
                             {
-                                "indexed": true,
+                                "indexed": false,
+                                "name": "_address",
+                                "type": "address"
+                            },
+                            {
+                                "indexed": false,
                                 "name": "name",
                                 "type": "string"
                             },
                             {
-                                "indexed": true,
-                                "name": "serviceAddress",
+                                "indexed": false,
+                                "name": "serviceLocation",
                                 "type": "string"
                             }
                         ],
@@ -370,7 +375,7 @@
                             {
                                 "indexed": true,
                                 "name": "VIN",
-                                "type": "string"
+                                "type": "bytes17"
                             }
                         ],
                         "name": "warrantyCanceled",
@@ -449,7 +454,7 @@
                             },
                             {
                                 "name": "_VIN",
-                                "type": "string"
+                                "type": "bytes17"
                             }
                         ],
                         "name": "newCar",
@@ -495,7 +500,7 @@
                         "inputs": [
                             {
                                 "name": "_carVIN",
-                                "type": "string"
+                                "type": "bytes17"
                             },
                             {
                                 "name": "documentLink",
@@ -519,7 +524,7 @@
                 ];
 
                 let contract = web3.eth.contract(abi2);
-                this.contract = contract.at('0x805cedc499aa2a75cbee29d084db25e3b3923139');
+                this.contract = contract.at('0x1c569be0b3acce2ebcc610d6cb0e3035604f8e44');
                 this.contract.isContractOwner((err, resp) => {
                     console.log(err, resp);
                     this.isOwner = resp;

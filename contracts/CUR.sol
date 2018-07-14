@@ -9,7 +9,7 @@ contract CUR {
 
     struct Car {
         string model;
-        string VIN;
+        bytes17 VIN;
         uint dateCreated;
         uint warrantyUntil;
         address manufacturerAddress;
@@ -26,19 +26,19 @@ contract CUR {
     address private owner;
     mapping(address => Manufacturer) manufacturers;
     mapping(address => Service) services;
-    mapping(string => Car) cars;
+    mapping(bytes17 => Car) cars;
 
     constructor() public {
         owner = msg.sender;
     }
 
-    event carCreated(string model, string indexed VIN, address indexed manufaturerAddress, uint dateCreated, uint warrantyUntil);
-    event carRepaired(string indexed VIN, address indexed repairService, bool authorised, string documentLink, uint date,
+    event carCreated(string model, bytes17 indexed VIN, address indexed manufaturerAddress, uint dateCreated, uint warrantyUntil);
+    event carRepaired(bytes17 indexed VIN, address indexed repairService, bool authorised, string documentLink, uint date,
         string details, uint mileage);
     event manufacturerCreated(address indexed _address, string name, string logo);
-    event serviceCreated(string indexed name, string indexed serviceAddress);
+    event serviceCreated(address _address, string name, string serviceLocation);
     event serviceAuthorized(address indexed serviceAddress, address indexed manufaturerAddress);
-    event warrantyCanceled(string indexed VIN);
+    event warrantyCanceled(bytes17 indexed VIN);
 
     modifier isOwner() {
         require(msg.sender == owner);
@@ -73,7 +73,7 @@ contract CUR {
         emit manufacturerCreated(_address, _name, _logo);
     }
 
-    function newCar(string _model, string _VIN) public isManufacturer {
+    function newCar(string _model, bytes17 _VIN) public isManufacturer {
         require(cars[_VIN].exists == false);
         cars[_VIN] = Car({
             model : _model,
@@ -93,7 +93,7 @@ contract CUR {
             services[msg.sender].authorizedManufacturers[msg.sender] = true;
             emit serviceAuthorized(msg.sender, msg.sender);
         }
-        emit serviceCreated(_name, _serviceAddress);
+        emit serviceCreated(msg.sender, _name, _serviceAddress);
     }
 
     function verifyService(address _serviceAddress) public isManufacturer {
@@ -101,7 +101,7 @@ contract CUR {
         emit serviceAuthorized(_serviceAddress, msg.sender);
     }
 
-    function repairCar(string _carVIN, string documentLink, string _details, uint mileage) isService public {
+    function repairCar(bytes17 _carVIN, string documentLink, string _details, uint mileage) isService public {
         address carManufacturer = cars[_carVIN].manufacturerAddress;
         bool isAuthorizedService = services[msg.sender].authorizedManufacturers[carManufacturer];
         if (!isAuthorizedService && cars[_carVIN].warrantyUntil > block.timestamp) {

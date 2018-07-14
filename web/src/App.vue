@@ -6,7 +6,8 @@
 </template>
 
 <script>
-    import RwvHeader from '@/components/Header'
+/* eslint-disable */
+import RwvHeader from '@/components/Header'
 export default {
   name: 'App',
     components: {

@@ -21,7 +21,7 @@
                         <img :src="logos[car.manufaturerAddress]"/>
                     </div>
                 </td>
-                <td>{{ car.VIN }}</td>
+                <td>{{ web3js.toAscii(car.VIN) }}</td>
                 <td>{{ car.model }}</td>
                 <td>
                     <router-link :to="{ name: 'Car', params: { VIN: car.VIN } }">View Details</router-link>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-    /* eslint-disable */
+/* eslint-disable */
     import Base from './Base'
 
     export default {
@@ -69,15 +69,6 @@
                         self.cars.push(eventResult.args);
                     }
                 });
-//                self.contract.carCreated({}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
-//                    if (error)
-//                        console.log('Error in myEvent event handler: ' + error);
-//                    else {
-//                        eventResult.map(function (value, key) {
-//                            self.cars.push(value.args);
-//                        });
-//                    }
-//                });
             });
         }
     }

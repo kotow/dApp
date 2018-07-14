@@ -14,6 +14,11 @@
         </div>
 
         <table class="list">
+            <thead>
+                <td>Logo</td>
+                <td>Name</td>
+                <td>Info</td>
+            </thead>
             <tr v-for="manufacturer in manufacturers" :key="manufacturer._address">
                 <td style="display: block;width: 100px;"><img :src="getUrl(manufacturer.logo)"/></td>
                 <td>{{ manufacturer.name }}</td>
@@ -65,13 +70,32 @@
         height: auto;
     }
 
-    table.list, table.list td {
-        border: solid 1px;
+    table.list {
+        padding-top: 100px;
+        border-collapse: collapse;
+        width: 100%;
+        border: 2px solid black;
+    }
+    table.list thead {
+        background-color: #4CAF50;
+        color: white;
+        height: 25px;
+    }
+    table.list td {
+        text-align: left;
+        padding: 8px;
+        height: 100px;
+        border: 2px solid black;
+    }
+    table.list tr:nth-child(even){background-color: #c2c2c2}
+    table.list tr:nth-child(odd){background-color: #929292}
+    table.list img {
+        display:block; width:100px; height:auto;
     }
 </style>
 <script>
-    /* eslint-disable */
-    import Base from './Base'
+/* eslint-disable */
+import Base from './Base'
 
     const ipfsAPI = require('ipfs-api');
     const buffer = require('buffer');
@@ -109,33 +133,15 @@
                 }
             },
             registerManufacturer: function (event) {
-                console.log(this.logo);
-                console.log(this.name);
-                console.log(this.address);
-                this.contract.createManufacturer("0x4e10eff0eb046194a4b220053d8bd3644707574f", this.name, this.logo, (err, resp) => {
+                this.contract.createManufacturer(String(this.address), this.name, this.logo, (err, resp) => {
                     console.log(err);
                 });
-
             }
         },
         created() {
             let self = this;
-//            this.contract.manufacturerCreated({}, {fromBlock: 0, toBlock: 'latest'}).get((error, eventResult) => {
-//                if (error)
-//                    console.log('Error in myEvent event handler: ' + error);
-//                else {
-//                    eventResult.map(function (value, key) {
-//                        self.manufacturers.push(value.args);
-//                    });
-//                }
-//            });
             this.contract.manufacturerCreated({}, {fromBlock: 0, toBlock: 'latest'}).watch((error, eventResult) => {
-                console.log('Error in myEvent event handler: ' + eventResult);
-                if (error)
-                    console.log('Error in myEvent event handler: ' + eventResult);
-                else {
-                    self.manufacturers.push(eventResult.args);
-                }
+                self.manufacturers.push(eventResult.args);
             });
         }
     }
